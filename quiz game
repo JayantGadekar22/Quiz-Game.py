@@ -1,0 +1,86 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Quiz questions and answers 
+quiz_data = [
+    {
+        "question": "which animal is known as the king of the jungle?",
+        "options": ["Deer", "Lion", "Camel", "Goat"],
+        "correct_answer": "Lion",
+    },
+    {
+        "question": "How many minutes are there in an hour?",
+        "options": ["60 m", "40 m", "50 m", "70 m"],
+        "correct_answer": "60 m",
+    },
+    {
+        "question": "How many letter are there in the English alphabet?",
+        "options": ["25letter", "27letter", "28letter", "26letter"],
+        "correct_answer": "26letter",
+    },
+    {
+        "question": "How many days are there in a week?",
+        "options": ["6days", "8days", "7days", "10days"],
+        "correct_answer": "7days",
+    },
+]
+
+class QuizApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        self.score = 0
+        self.current_question = 0
+
+        self.title("Quiz Game By Jayant Gadekar")
+        self.geometry("600x500")
+
+        self.label_question = tk.Label(self, text="", wraplength=300, font=('Book Antiqua', 20, 'bold'))
+        self.label_question.pack(pady=10)
+
+        self.radio_var = tk.StringVar()
+        self.radio_var.set(-1) 
+
+        self.radio_buttons = []
+        for i in range(4):
+            radio = tk.Radiobutton(self, text="", variable=self.radio_var, value=i)
+            self.radio_buttons.append(radio)
+            radio.pack()
+
+        self.button_next = tk.Button(self, text="Next", command=self.next_question, font=('Book Antiqua', 12, 'bold'))
+        self.button_next.pack(pady=10)
+        self.load_question(0)
+
+    def load_question(self, question_index):
+        if question_index < len(quiz_data):
+            self.label_question.config(text=quiz_data[question_index]["question"])
+            for i in range(4):
+                self.radio_buttons[i].config(text=quiz_data[question_index]["options"][i], font=('Book Antiqua', 15, 'bold'))
+        else:
+            self.show_result()
+
+    def next_question(self):
+        selected_option = int(self.radio_var.get())
+
+        if selected_option == -1:
+            messagebox.showwarning("Warning", "Please select an option.", font=('Book Antiqua', 10, 'bold'))
+        else:
+            correct_answer = quiz_data[self.current_question]["correct_answer"]
+            if quiz_data[self.current_question]["options"][selected_option] == correct_answer:
+                self.score += 1
+
+            self.current_question += 1
+            self.radio_var.set(-1)  
+
+            if self.current_question < len(quiz_data):
+                self.load_question(self.current_question)
+            else:
+                self.show_result()
+
+    def show_result(self):
+        messagebox.showinfo("Result", f"You scored {self.score}/{len(quiz_data)}")
+        self.quit()
+
+if __name__ == "__main__":
+    app = QuizApp()
+    app.mainloop()
